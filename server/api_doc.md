@@ -12,4 +12,3 @@ npx sequelize-cli model:generate --name UserMoods --attributes UserId:integer,Mo
 npx sequelize-cli seed:generate --name demo-user
 npx sequelize-cli seed:generate --name demo-image
 npx sequelize-cli seed:generate --name demo-mood
-

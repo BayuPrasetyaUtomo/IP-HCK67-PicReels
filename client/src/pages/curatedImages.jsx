@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 // import { useSearchParams } from "react-router-dom";
+import { SmallCard } from "../components";
 
 export default function CuratedImages() {
   const [photos, setPhotos] = useState([]);
@@ -21,10 +22,12 @@ export default function CuratedImages() {
 
   // console.log(searchParams);
   const fetchImage = async () => {
-    const { photos } = (await axios({
-      method: "get",
-      url: `http://localhost:3000/images`,
-    })).data;
+    const { photos } = (
+      await axios({
+        method: "get",
+        url: `http://localhost:3000/images`,
+      })
+    ).data;
 
     setPhotos(photos);
   };
@@ -35,26 +38,11 @@ export default function CuratedImages() {
   }, []);
   return (
     <>
+    <div className="flex flex-wrap justify-evenly">
       {photos.map((photo) => {
-          return (
-            <div key={photo.id} className="card card-compact w-96 bg-base-100 shadow-xl">
-              <figure>
-                <img
-                  src={photo.src.landscape}
-                  className="object-cover h-48 w-96"
-                  alt={photo.alt}
-                />
-              </figure>
-              <div className="card-body">
-                <h2 className="card-title">{photo.photographer}</h2>
-                <p>{photo.alt}</p>
-                <div className="card-actions justify-end">
-                  <button className="btn btn-primary">Buy Now</button>
-                </div>
-              </div>
-            </div>
-          );
-        })}
+        return <SmallCard photo={photo} key={photo.id}/>;
+      })}
+    </div>
     </>
   );
 }

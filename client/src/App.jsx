@@ -8,57 +8,15 @@ import {
   BrowserRouter,
   Outlet,
 } from "react-router-dom";
-import { Homepage, Root } from "./pages";
+import { Homepage, Root, CuratedImages } from "./pages";
+import { SmallCard } from "./components";
 // import "./App.css";
-import CuratedImages from "./pages/curatedImages";
 
 const router = createBrowserRouter([
-  // {
-  //   element: <Root />,
-  //   children: [
-  //     {
-  //       path: "/",
-  //       element: (
-  //         <>
-  //           <Homepage>
-  //             <Link to="about">About Us</Link>
-  //           </Homepage>
-  //         </>
-  //       ),
-  //     },
-  //     {
-  //       path: "about",
-  //       element: (
-  //         <>
-  //           <div>About</div>
-  //         </>
-  //       ),
-  //     },
-  //   ],
-  // },
   {
-    path: "/",
-    element: <CuratedImages/>,
-    // children: [
-    //   {
-    //     element: (
-    //       <>
-    //         <Homepage>
-    //           <CuratedImages />
-    //         </Homepage>
-    //       </>
-    //     ),
-      },
-  //     {
-  //       path: "about",
-  //       element: (
-  //         <>
-  //           <div>About</div>
-  //         </>
-  //       ),
-  //     },
-  //   ],
-  // },
+    path: "/images",
+    element: <CuratedImages />,
+  },
 ]);
 
 function App() {
@@ -67,7 +25,6 @@ function App() {
   return (
     <>
       <RouterProvider router={router} />
-      {/* <CuratedImages/> */}
     </>
   );
 }

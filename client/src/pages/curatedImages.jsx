@@ -1,31 +1,23 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-// import { useSearchParams } from "react-router-dom";
-import { SmallCard } from "../components";
+import { useSearchParams } from "react-router-dom";
+import { SmallCard, Pagination, Sidebar } from "../components";
 
 export default function CuratedImages() {
   const [photos, setPhotos] = useState([]);
-  // const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams("");
 
-  // function handleSubmit(event) {
-  //   event.preventDefault();
-  //   // The serialize function here would be responsible for
-  //   // creating an object of { key: value } pairs from the
-  //   // fields in the form that make up the query.
-  //   let params = serializeFormQuery(event.target);
-  //   setSearchParams(params);
-  // }
+  const { href, pathname } = window.location;
+  const queries = href.split(pathname)[1];
 
-  // useEffect(() => {
-  //   handleSubmit();
-  // }, []);
-
-  // console.log(searchParams);
   const fetchImage = async () => {
     const { photos } = (
       await axios({
         method: "get",
-        url: `http://localhost:3000/images`,
+        url: `http://localhost:3000/images${queries ? queries : ""}`,
+        headers: {
+          Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwiaWF0IjoxNzA3OTIzMzEzfQ.w2fkm1hQ7gkN10PIL7qOw8ki-arG6fBwkpCa-Pb04UI"
+        }
       })
     ).data;
 
@@ -38,11 +30,11 @@ export default function CuratedImages() {
   }, []);
   return (
     <>
-    <div className="flex flex-wrap justify-evenly">
-      {photos.map((photo) => {
-        return <SmallCard photo={photo} key={photo.id}/>;
-      })}
-    </div>
+        <div className="flex flex-wrap place-content-evenly">
+          {photos.map((photo) => {
+            return <SmallCard photo={photo} key={photo.id} />;
+          })}
+        </div>
     </>
   );
 }

@@ -8,25 +8,50 @@ import {
   BrowserRouter,
   Outlet,
 } from "react-router-dom";
-import { Homepage, Root, CuratedImages } from "./pages";
-import { SmallCard } from "./components";
-// import "./App.css";
+import {
+  HomePage,
+  Root,
+  CuratedImages,
+  // LoginPage,
+  RegisterPage,
+  SimpleLoginPage,
+} from "./pages";
+import { Sidebar } from "./components";
+
 
 const router = createBrowserRouter([
   {
-    path: "/images",
-    element: <CuratedImages />,
+    path: "/",
+    element: (
+      <>
+        <HomePage />
+      </>
+    ),
   },
+  {
+    path: "/images",
+    element: (
+      <>
+        <CuratedImages />
+      </>
+    ),
+  },
+  {
+    path: "/login",
+    element: (
+      <>
+      <SimpleLoginPage />
+      </>
+    ),
+  },
+  // {
+  //   path: "/register",
+  //   element: <RegisterPage />,
+  // },
 ]);
 
 function App() {
-  const [count, setCount] = useState(0);
-
-  return (
-    <>
-      <RouterProvider router={router} />
-    </>
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;

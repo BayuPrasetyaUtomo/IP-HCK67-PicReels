@@ -68,8 +68,8 @@ module.exports = class ImageController {
       // const photos = require("../seeds/images.json")
       const {photos} = response.data
 
-      // const remainingToken = response.headers['x-ratelimit-remaining']
-      // photos.remaining = remainingToken
+      const remainingToken = response.headers['x-ratelimit-remaining']
+      photos.remaining = remainingToken
       const randomPhoto = photos[randomizer(0, 50)]
       res.status(200).json(randomPhoto)
     } catch (error) {

@@ -13,22 +13,30 @@ export default function LoginPage() {
   const fetchImage = async () => {
     try {
       // console.log("IN");
-      const { data } = await axios({
+      const data  = await axios({
         method: "get",
         url: "http://localhost:3000/surprise",
       });
 
       console.log(data);
       setPhoto(data);
-      setLoading(false);
+      // setLoading(false);
     } catch (error) {
       console.log(error);
     }
   };
-
-  useEffect(() => {
-    fetchImage();
-  }, []);
+  useEffect(()=> {
+    if(photo.length) {
+      // do your magic here
+      setLoading(false);
+    }
+    if (loading) {
+      fetchImage()
+    }
+  }, [loading])
+  // useEffect(() => {
+  //   fetchImage();
+  // }, []);
 
   console.log(photo);
 

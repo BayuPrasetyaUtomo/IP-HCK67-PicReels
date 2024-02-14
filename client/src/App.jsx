@@ -12,9 +12,9 @@ import {
   HomePage,
   Root,
   CuratedImages,
-  // LoginPage,
+  LoginPage,
   RegisterPage,
-  SimpleLoginPage,
+  // SimpleLoginPage,
 } from "./pages";
 import { Sidebar } from "./components";
 
@@ -40,7 +40,7 @@ const router = createBrowserRouter([
     path: "/login",
     element: (
       <>
-      <SimpleLoginPage />
+      <LoginPage />
       </>
     ),
   },

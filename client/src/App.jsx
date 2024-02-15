@@ -2,15 +2,10 @@ import { createRoot } from "react-dom/client";
 import {
   createBrowserRouter,
   RouterProvider,
-  Route,
-  Link,
-  BrowserRouter,
-  Outlet,
   redirect,
 } from "react-router-dom";
 import {
   HomePage,
-  Root,
   CuratedImages,
   LoginPage,
   RegisterPage,

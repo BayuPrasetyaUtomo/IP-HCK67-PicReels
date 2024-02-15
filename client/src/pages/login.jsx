@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { randomizer } from "../utils";
 import { LoadingCircle } from "../components";
+import { GoogleLogin } from "@react-oauth/google";
 
 export default function LoginPage() {
   const [photo, setPhoto] = useState([]);
@@ -41,15 +42,51 @@ export default function LoginPage() {
       const { username: name, subscription } = data.user;
       localStorage.setItem("access_token", data.access_token);
       localStorage.setItem("user", JSON.stringify({ name, subscription }));
-      navigate("/images");
+      navigate("/greet");
     } catch (error) {
       console.log(error);
     }
   };
 
+  const handleCredentialResponse = async (response) => {
+    console.log("Encoded JWT ID token: " + response.credential);
+    try {
+      const { data } = await axios({
+        method: "POST",
+        url: "http://localhost:3000/google-login",
+        headers: {
+          google_token: response.credential,
+        },
+      });
+
+      console.log(data);
+      const { username: name, subscription } = data.user;
+      localStorage.setItem("access_token", data.access_token);
+      localStorage.setItem("user", JSON.stringify({ name, subscription }));
+      navigate("/greet");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  function googleSignIn() {
+    google.accounts.id.initialize({
+      client_id:
+        "757857290112-c6o03pkilg2g1qgblvh8favngit0at8h.apps.googleusercontent.com",
+      callback: handleCredentialResponse,
+    });
+    google.accounts.id.renderButton(
+      document.getElementById("buttonDiv"),
+      { theme: "dark", size: "large" } // customization attributes
+    );
+    google.accounts.id.prompt(); // also display the One Tap dialog
+  }
+
   useEffect(() => {
+    // googleSignIn();
     fetchImage();
   }, [loading]);
+
   const { id, photographer, photographer_url, alt, src } = photo;
 
   console.log(photo);
@@ -126,7 +163,15 @@ export default function LoginPage() {
                     </a>
                   </label>
                 </div>
-                <div className="form-control mt-6">
+                <div className="form-control mt-6 justify-center">
+                  {/* <div id="buttonDiv"></div> */}
+                  <GoogleLogin width={320} theme="filled_blue"
+                    onSuccess={(handleCredentialResponse)}
+                    onError={() => {
+                      console.log("Login Failed");
+                    }}
+                  />
+                  <p className="my-2">OR</p>
                   <button className="btn btn-primary" type="submit">
                     Login
                   </button>

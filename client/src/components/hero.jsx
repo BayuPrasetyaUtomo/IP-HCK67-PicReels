@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 export default function Hero({ props }) {
   const tags = ["Angry", "Sad", "Adventurous", "Lonely", "Excited", "Happy"];
 
-  console.log(props.captions.split("\n"));
   return (
     <>
       <div className="hero min-h-[500px] bg-base-200">
@@ -14,13 +13,13 @@ export default function Hero({ props }) {
               {props ? `Hi, ${props.name}` : `Welcome back`}
             </h1>
             <p className="py-6 whitespace-pre-line">
-              {props.captions
+              {props && props.captions
                 ? props.captions
                 : "Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem quasi. In deleniti aut repudiandae et a id nisi."}
             </p>
             <div className="flex flex-wrap justify-center gap-6">
-              {tags.map((tag) => {
-                return <Link to={`/feelings/?feeling=${tag.toLowerCase()}`} className="btn btn-primary w-32">{tag}</Link>;
+              {tags.map((tag, index) => {
+                return <Link key={`${tag}_${index}`} to={`/feelings/?feeling=${tag.toLowerCase()}`} className="btn btn-primary w-32">{tag}</Link>;
               })}
             </div>
           </div>

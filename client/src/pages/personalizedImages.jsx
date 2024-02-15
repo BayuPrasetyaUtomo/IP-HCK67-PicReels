@@ -53,7 +53,6 @@ export default function PersonalizedImage() {
           <LoadingCircle />
         ) : (
           <>
-            <Navbar />
             <Hero props={{ name, captions }} />
             <div className="bg-white-600"></div>
           </>

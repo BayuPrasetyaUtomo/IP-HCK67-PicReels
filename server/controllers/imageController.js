@@ -17,11 +17,11 @@ module.exports = class ImageController {
   static async showCuratedImages(req, res, next) {
     try {
 
+      const { username, subscription } = req.user
       const { page, limit } = req.query
-      const randomPage = randomizer(1, 30)
-      const data = await photos.curated({ page: page || randomPage, per_page: limit || 50 });
+      const randomPage = randomizer(1, 50)
+      let data = await photos.curated({ page: page || randomPage, per_page: limit || 50 });
 
-      console.log(data);
       res.status(200).json(data)
     } catch (error) {
       next(error)
@@ -35,7 +35,6 @@ module.exports = class ImageController {
       const randomPage = randomizer(1, 30)
       const data = await collections.featured({ page: page || 1, per_page: limit || 50 });
 
-      console.log(data);
       res.status(200).json(data)
     } catch (error) {
       next(error)
@@ -49,7 +48,7 @@ module.exports = class ImageController {
 
       const data = await photos.curated({ page: page || 1, per_page: limit || 50 });
 
-      console.log(data);
+      // console.log(data);
       res.status(200).json(data)
     } catch (error) {
       next(error)
@@ -64,14 +63,20 @@ module.exports = class ImageController {
       const query = categories[getHour()]
 
       // const response = await photos.search({ query, page: page, per_page: 30 })//).photos
-      const response = await axios({ url: `https://api.pexels.com/v1/search?query=${query}&page=${page}&per_page=${50}`, method: "get", headers: { Authorization: pexelsKey }})
-      // const photos = require("../seeds/images.json")
-      const {photos} = response.data
+      // const response = await axios({ url: `https://api.pexels.com/v1/search?query=${query}&page=${page}&per_page=${50}`, method: "get", headers: { Authorization: pexelsKey } })
+      // const { photos } = response.data
 
-      const remainingToken = response.headers['x-ratelimit-remaining']
-      photos.remaining = remainingToken
-      const randomPhoto = photos[randomizer(0, 50)]
-      res.status(200).json(randomPhoto)
+      // console.log(photos);
+      // const remainingToken = response.headers['x-ratelimit-remaining']
+      // photos.remaining = remainingToken
+      // const randomPhoto = photos[randomizer(0, 50)]
+      // console.log(photos.remaining);
+      // res.status(200).json(randomPhoto)
+
+      const seed = require("../seeds/images.json")
+      // console.log(seed);
+      const randomSeed = seed[randomizer(0, 50)]
+      res.status(200).json(randomSeed)
     } catch (error) {
       next(error)
     }
@@ -79,7 +84,100 @@ module.exports = class ImageController {
 
   static async suggestImageFromMood(req, res, next) {
     try {
-      
+      const anger = ["Fire", "Storm", "Scream", "Angry"]
+      const sad = ["Tears", "Rainy", "Melancholy", "Mist"]
+      const adventurous = ["Waterfall", "Rainy", "Ocean", "Trip"]
+      const lonely = ["Reflection", "Night Sky", "Forest", "Snow"]
+      const excited = ["Fireworks", "Surf", "Travel", "Support"]
+      const happy = ["Celebration", "Spring", "Nature", "Smile"]
+
+      let query;
+
+      const { feeling } = req.query
+      console.log(req.query);
+      switch (feeling) {
+        case "anger":
+
+          break;
+        case "sad":
+
+          break;
+        case "adventurous":
+
+          break;
+
+        case "lonely":
+
+          break;
+        case "excited":
+
+          break;
+        case "happy":
+
+          break;
+        default:
+          break;
+      }
+
+      // const page = randomizer(1, 15)
+      // const query = categories[getHour()]
+
+      // const response = await photos.search({ query, page: page, per_page: 30 })//).photos
+      // const response = await axios({ url: `https://api.pexels.com/v1/search?query=${query}&page=${page}&per_page=${50}`, method: "get", headers: { Authorization: pexelsKey } })
+      // const { photos } = response.data
+
+      // console.log(photos);
+      // const remainingToken = response.headers['x-ratelimit-remaining']
+      // photos.remaining = remainingToken
+      // const randomPhoto = photos[randomizer(0, 50)]
+      // console.log(photos.remaining);
+      // res.status(200).json(randomPhoto)
+
+      // const seed = require("../seeds/images.json")
+      // console.log(seed);
+      // const randomSeed = seed[randomizer(0, 50)]
+      res.status(200).json(randomSeed)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  static async personalizedCaption(req, res, next) {
+    try {
+      const { username, subscription: subscriber } = req.user
+      const { page, limit } = req.query
+      const randomPage = randomizer(1, 50)
+      let outputTokens = 10
+      const prompt = `Greet ${username}, ask him/her about her day and give a word of encouragement. Separate each sentence using\n`
+
+      subscriber ? outputTokens = 50 : outputTokens
+
+      let data = await photos.curated({ page: page || randomPage, per_page: limit || 50 });
+
+      const config = {
+        maxOutputTokens: outputTokens,
+        temperature: 0.9,
+        topP: 0.1,
+        topK: 16,
+      }
+
+      const { response } = await model.generateContent(prompt, config)
+
+      const caption = response.text();
+
+      data = { ...data, caption }
+
+      // console.log(caption);
+      console.log(data.caption);
+      res.status(200).json(data)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  static async myImageFeeling(req, res, next) {
+    try {
+
     } catch (error) {
       next(error)
     }
@@ -90,7 +188,7 @@ module.exports = class ImageController {
       const prompt = "Write a caption for an image about nature, snow and rain in a single image"
       let subscriber = false
       let outputTokens = 50
-      console.log(outputTokens);
+      // console.log(outputTokens);
 
       const config = {
         maxOutputTokens: outputTokens,
@@ -103,9 +201,9 @@ module.exports = class ImageController {
 
       // subscriber = true
       subscriber ? outputTokens = 200 : outputTokens
-      console.log(outputTokens, "true");
-      console.log(model.generationConfig);
-      console.log(caption);
+      // console.log(outputTokens, "true");
+      // console.log(model.generationConfig);
+      // console.log(caption);
       res.status(200).json(caption)
     } catch (error) {
       next(error)

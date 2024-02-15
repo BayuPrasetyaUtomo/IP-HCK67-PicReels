@@ -54,7 +54,8 @@ module.exports = class UserController {
 
       const token = signToken({ id: user.id })
 
-      res.status(200).json({ access_token: `Bearer ${token}` })
+
+      res.status(200).json({ access_token: `${token}`, user: { username: user.username, subscription: user.subscription } })
     } catch (error) {
       next(error)
     }
@@ -66,6 +67,15 @@ module.exports = class UserController {
 
     } catch (error) {
       next(error)
+    }
+  }
+
+
+  static async logout() {
+    try {
+
+    } catch (error) {
+
     }
   }
 

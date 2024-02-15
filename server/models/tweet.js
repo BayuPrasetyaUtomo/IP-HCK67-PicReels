@@ -11,13 +11,68 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Tweet.belongsTo(models.User, { foreignKey: "UserId" })
+      Tweet.hasOne(models.Image, { foreignKey: "TweetId" })
     }
   }
   Tweet.init({
-    emoji: DataTypes.STRING,
-    title: DataTypes.STRING,
-    caption: DataTypes.STRING,
-    UserId: DataTypes.INTEGER
+    emoji: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          args: true,
+          msg: "Emoji cannot be empty"
+        },
+        notNull: {
+          args: true,
+          msg: "Emoji cannot be empty"
+        },
+      }
+    },
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          args: true,
+          msg: "Title cannot be empty"
+        },
+        notNull: {
+          args: true,
+          msg: "Title cannot be empty"
+        },
+      }
+    },
+    caption: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          args: true,
+          msg: "Caption cannot be empty"
+        },
+        notNull: {
+          args: true,
+          msg: "Caption cannot be empty"
+        },
+      }
+    },
+    UserId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          args: true,
+          msg: "User cannot be empty"
+        },
+        notNull: {
+          args: true,
+          msg: "User cannot be empty"
+        },
+      }
+    },
+
   }, {
     sequelize,
     modelName: 'Tweet',

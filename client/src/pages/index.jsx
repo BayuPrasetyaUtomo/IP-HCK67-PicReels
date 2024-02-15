@@ -4,13 +4,15 @@ import HomePage from "./homepage";
 import CuratedImages from "./curatedImages";
 import LoginPage from "./login";
 import RegisterPage from "./register";
-// import SimpleLoginPage from "./simpleLogin";
+import PersonalizedImage from "./personalizedImages";
+import Layout from "./layout";
 
 export {
   Root,
   HomePage,
   CuratedImages,
   LoginPage,
-  // SimpleLoginPage,
   RegisterPage,
+  PersonalizedImage,
+  Layout,
 };

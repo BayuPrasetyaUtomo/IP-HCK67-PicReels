@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   createBrowserRouter,
@@ -7,6 +6,7 @@ import {
   Link,
   BrowserRouter,
   Outlet,
+  redirect,
 } from "react-router-dom";
 import {
   HomePage,
@@ -14,10 +14,13 @@ import {
   CuratedImages,
   LoginPage,
   RegisterPage,
-  // SimpleLoginPage,
+  PersonalizedImage,
 } from "./pages";
-import { Sidebar } from "./components";
 
+const getToken = () => {
+  const access_token = localStorage.getItem("access_token")
+  return access_token
+};
 
 const router = createBrowserRouter([
   {
@@ -28,8 +31,16 @@ const router = createBrowserRouter([
       </>
     ),
   },
+  
   {
     path: "/images",
+    loader: async () => {
+      const access_token = getToken()
+      if (!access_token) {
+        return redirect("/login");
+      }
+      return null;
+    },
     element: (
       <>
         <CuratedImages />
@@ -37,17 +48,53 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/login",
+    path: "/greet",
+    loader: async () => {
+      const access_token = getToken()
+      if (!access_token) {
+        return redirect("/login");
+      }
+      return null;
+    },
     element: (
       <>
-      <LoginPage />
+        <PersonalizedImage />
       </>
     ),
   },
-  // {
-  //   path: "/register",
-  //   element: <RegisterPage />,
-  // },
+  {
+    path: "/login",
+    element: (
+      <>
+        <LoginPage />
+      </>
+    ),
+    loader: async () => {
+      const access_token = getToken()
+      if (access_token) {
+        return redirect("/images");
+      }
+      return null;
+    },
+  },
+  {
+    path: "/register",
+    element: <RegisterPage />,
+    loader: async () => {
+      const access_token = getToken()
+      if (access_token) {
+        return redirect("/images");
+      }
+      return null;
+    },
+  },
+  {
+    path: "/logout",
+    loader: async () => {
+      localStorage.clear();
+      return redirect("/login");
+    },
+  },
 ]);
 
 function App() {

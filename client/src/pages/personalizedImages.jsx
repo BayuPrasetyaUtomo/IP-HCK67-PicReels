@@ -10,22 +10,24 @@ import {
   Navbar,
 } from "../components";
 
-export default function CuratedImages() {
+export default function PersonalizedImage() {
   const [photos, setPhotos] = useState([]);
+  const [captions, setCaptions] = useState("");
   const [searchParams, setSearchParams] = useSearchParams("");
   const [loading, setLoading] = useState(true);
+  const [loadCaption, setLoadCaption] = useState(true);
   const access_token = localStorage.getItem("access_token");
-  const {name, subscription} = JSON.parse(localStorage.getItem("user"))
+  const { name, subscription } = JSON.parse(localStorage.getItem("user"));
 
   const { href, pathname } = window.location;
   const queries = href.split(pathname)[1];
 
   const fetchImage = async () => {
     try {
-      const { photos } = (
+      const { photos, caption } = (
         await axios({
           method: "get",
-          url: `http://localhost:3000/images${queries ? queries : ""}`,
+          url: `http://localhost:3000/greet${queries ? queries : ""}`,
           headers: {
             Authorization: `Bearer ${access_token}`,
           },
@@ -34,6 +36,8 @@ export default function CuratedImages() {
 
       setPhotos(photos);
       setLoading(false);
+      setCaptions(caption);
+      setLoadCaption(false);
     } catch (error) {
       console.log(error);
     }
@@ -44,13 +48,24 @@ export default function CuratedImages() {
   }, []);
   return (
     <>
-      <div className="flex flex-wrap place-content-evenly">
-        <Navbar />
-        <Hero props={{name, subscription}}/>
+      <div className="flex flex-wrap place-content-evenly overflow-auto">
+        {loadCaption ? (
+          <LoadingCircle />
+        ) : (
+          <>
+            <Navbar />
+            <Hero props={{ name, captions }} />
+            <div className="bg-white-600"></div>
+          </>
+        )}
         {loading && <LoadingCircle />}
         {!loading &&
           photos.map((photo) => {
-            return <SmallCard photo={photo} key={photo.id} />;
+            return (
+              <>
+                <SmallCard photo={photo} key={photo.id} />
+              </>
+            );
           })}
       </div>
     </>

@@ -22,7 +22,7 @@ export default function Sidebar() {
       } bg-primary h-screen p-5 float-left pt-8 relative duration-300`}
     >
       <img
-        src="./public/assets/arrow.png"
+        src="./assets/arrow.png"
         className={`absolute cursor-pointer -right-3 top-9 w-7 border-dark-purple
            border-2 rounded-full  ${!open && "rotate-180"}`}
         onClick={() => setOpen(!open)}
@@ -50,7 +50,7 @@ export default function Sidebar() {
               index === 0 && "bg-light-white"
             } `}
           >
-            <img className="size-6" src={`./public/assets/${Menu.src}.png`} />
+            <img className="size-6" src={`./assets/${Menu.src}.png`} />
             <span className={`${!open && "hidden"} origin-left duration-200`}>
               {Menu.title}
             </span>

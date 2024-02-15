@@ -22,6 +22,7 @@ module.exports = authentication = async (req, res, next) => {
 
     req.user = {
       id: user.id,
+      username: user.username,
       email: user.email,
       subscription: user.subscription
     }

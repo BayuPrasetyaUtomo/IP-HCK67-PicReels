@@ -90,6 +90,7 @@ module.exports = class ImageController {
       const lonely = ["Reflection", "Night Sky", "Forest", "Snow"]
       const excited = ["Fireworks", "Surf", "Travel", "Support"]
       const happy = ["Celebration", "Spring", "Nature", "Smile"]
+      const randomNum = randomizer(0, 3)
 
       let query;
 
@@ -97,46 +98,55 @@ module.exports = class ImageController {
       console.log(req.query);
       switch (feeling) {
         case "anger":
-
+          query = anger[randomNum]
           break;
+
         case "sad":
-
+          query = sad[randomNum]
           break;
-        case "adventurous":
 
+        case "adventurous":
+          query = adventurous[randomNum]
           break;
 
         case "lonely":
-
+          query = lonely[randomNum]
           break;
-        case "excited":
 
+        case "excited":
+          query = excited[randomNum]
           break;
         case "happy":
-
-          break;
-        default:
+          query = happy[randomNum]
           break;
       }
 
-      // const page = randomizer(1, 15)
-      // const query = categories[getHour()]
+      const page = randomizer(1, 15)
 
-      // const response = await photos.search({ query, page: page, per_page: 30 })//).photos
-      // const response = await axios({ url: `https://api.pexels.com/v1/search?query=${query}&page=${page}&per_page=${50}`, method: "get", headers: { Authorization: pexelsKey } })
-      // const { photos } = response.data
+      const response = await axios({ url: `https://api.pexels.com/v1/search?query=${query}&page=${page}&per_page=${50}`, method: "get", headers: { Authorization: pexelsKey } })
+      let { photos } = response.data
+      const { username, subscription: subscriber } = req.user
+      let outputTokens = 10
+      subscriber ? outputTokens = 50 : outputTokens
+      const config = {
+        maxOutputTokens: outputTokens,
+        temperature: 0.9,
+        topP: 0.1,
+        topK: 16,
+      }
+      const prompt = `Greet ${username}, comment about him/her feeling which is ${feeling} and the image generated for him/her that has ${query} tag. Separate each sentence using\n`
 
-      // console.log(photos);
-      // const remainingToken = response.headers['x-ratelimit-remaining']
-      // photos.remaining = remainingToken
-      // const randomPhoto = photos[randomizer(0, 50)]
-      // console.log(photos.remaining);
-      // res.status(200).json(randomPhoto)
+      const { response: result } = await model.generateContent(prompt, config)
 
-      // const seed = require("../seeds/images.json")
-      // console.log(seed);
-      // const randomSeed = seed[randomizer(0, 50)]
-      res.status(200).json(randomSeed)
+      const remainingToken = response.headers['x-ratelimit-remaining']
+      photos.remaining = remainingToken
+      console.log(photos.remaining);
+
+      const caption = result.text();
+      
+      photos = { ...photos, caption }
+      
+      res.status(200).json(photos)
     } catch (error) {
       next(error)
     }

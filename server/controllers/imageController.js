@@ -14,47 +14,6 @@ const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
 module.exports = class ImageController {
 
-  static async showCuratedImages(req, res, next) {
-    try {
-
-      const { username, subscription } = req.user
-      const { page, limit } = req.query
-      const randomPage = randomizer(1, 50)
-      let data = await photos.curated({ page: page || randomPage, per_page: limit || 50 });
-
-      res.status(200).json(data)
-    } catch (error) {
-      next(error)
-    }
-  }
-
-  static async showFeaturedImages(req, res, next) {
-    try {
-
-      const { page, limit } = req.query
-      const randomPage = randomizer(1, 30)
-      const data = await collections.featured({ page: page || 1, per_page: limit || 50 });
-
-      res.status(200).json(data)
-    } catch (error) {
-      next(error)
-    }
-  }
-
-  static async showMoodImages(req, res, next) {
-    try {
-
-      const { page, limit } = req.query
-
-      const data = await photos.curated({ page: page || 1, per_page: limit || 50 });
-
-      // console.log(data);
-      res.status(200).json(data)
-    } catch (error) {
-      next(error)
-    }
-  }
-
   static async showRandomImages(req, res, next) {
     try {
       const categories = ["Nature", "Ocean", "Cityscape", "Forest", "Mountain", "Sunset", "Dessert", "Nightscape", "Flower", "Universe"]
@@ -134,7 +93,7 @@ module.exports = class ImageController {
         topP: 0.1,
         topK: 16,
       }
-      const prompt = `Greet ${username}, comment about him/her feeling which is ${feeling} and the image generated for him/her that has ${query} tag. Separate each sentence using\n`
+      const prompt = `Greet ${username}, comment about him/her feeling which is ${feeling} and the image generated for him/her that has ${query} tag. Separate each sentence using\n and limit it into 50-75`
 
       const { response: result } = await model.generateContent(prompt, config)
 
@@ -180,14 +139,6 @@ module.exports = class ImageController {
       // console.log(caption);
       console.log(data.caption);
       res.status(200).json(data)
-    } catch (error) {
-      next(error)
-    }
-  }
-
-  static async myImageFeeling(req, res, next) {
-    try {
-
     } catch (error) {
       next(error)
     }

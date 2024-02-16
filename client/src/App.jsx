@@ -5,15 +5,14 @@ import {
   Navigate,
 } from "react-router-dom";
 import {
-  HomePage,
-  CuratedImages,
   LoginPage,
   RegisterPage,
   PersonalizedImage,
   Layout,
+  MoodImages,
+  MyImages,
 } from "./pages";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-
 const getToken = () => {
   const access_token = localStorage.getItem("access_token");
   return access_token;
@@ -21,26 +20,31 @@ const getToken = () => {
 
 const router = createBrowserRouter([
   {
-    path: "*",
-    element: <Navigate to={"/greet"} />,
-  },
-  {
     path: "/",
     element: <Layout />,
     loader: () => !localStorage.getItem("access_token") && redirect("/login"),
     children: [
       {
         path: "/greet",
-        loader: async () => {
-          const access_token = getToken();
-          if (!access_token) {
-            return redirect("/login");
-          }
-          return null;
-        },
         element: (
           <>
             <PersonalizedImage />
+          </>
+        ),
+      },
+      {
+        path: "/feelings",
+        element: (
+          <>
+            <MoodImages />
+          </>
+        ),
+      },
+      {
+        path: "/myImages",
+        element: (
+          <>
+            <MyImages />
           </>
         ),
       },
@@ -86,7 +90,7 @@ function App() {
     <GoogleOAuthProvider clientId="757857290112-c6o03pkilg2g1qgblvh8favngit0at8h.apps.googleusercontent.com">
       <RouterProvider router={router} />
     </GoogleOAuthProvider>
-  )
+  );
 }
 
 export default App;

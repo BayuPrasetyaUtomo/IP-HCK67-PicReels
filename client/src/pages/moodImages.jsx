@@ -1,16 +1,11 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useSearchParams } from "react-router-dom";
-import {
-  SmallCard,
-  LoadingCircle,
-  Hero,
-} from "../components";
+import { SmallCard, LoadingCircle, Hero } from "../components";
 
-export default function PersonalizedImage() {
+export default function MoodImages() {
   const [photos, setPhotos] = useState([]);
   const [captions, setCaptions] = useState("");
-  const [searchParams, setSearchParams] = useSearchParams("");
   const [loading, setLoading] = useState(true);
   const [loadCaption, setLoadCaption] = useState(true);
   const access_token = localStorage.getItem("access_token");
@@ -24,7 +19,7 @@ export default function PersonalizedImage() {
       const { photos, caption } = (
         await axios({
           method: "get",
-          url: `http://localhost:3000/greet${queries ? queries : ""}`,
+          url: `http://localhost:3000/feelings/${queries ? queries : ""}`,
           headers: {
             Authorization: `Bearer ${access_token}`,
           },
@@ -42,7 +37,8 @@ export default function PersonalizedImage() {
 
   useEffect(() => {
     fetchImage();
-  }, []);
+  }, [queries]);
+
   return (
     <>
       <div className="flex flex-wrap place-content-evenly overflow-auto">
@@ -55,12 +51,16 @@ export default function PersonalizedImage() {
           </>
         )}
         {loading && <LoadingCircle />}
-        
+
         {!loading &&
-          photos.map((photo) => {
+          photos.map((photo, index) => {
             return (
               <>
-                <SmallCard photo={photo} key={photo.id} />
+                <SmallCard
+                  photo={photo}
+                  queries={queries}
+                  key={`${index}${photo.id}`}
+                />
               </>
             );
           })}

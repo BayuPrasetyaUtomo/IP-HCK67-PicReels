@@ -1,11 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-export default function SmallCard({ photo }) {
+export default function SmallCard({ photo, queries }) {
   const { id, alt, photographer, src } = photo;
 
+  let emoji = queries && queries.slice(1)
   return (
-    <Link to={`/greet/${id}`} className="card w-96 bg-base-100 shadow-xl">
+    <Link to={`/myImages/?imgUrl=${src.landscape}&${emoji && emoji}`} className="card w-[550px] bg-base-100 shadow-xl">
       <figure>
         <img src={src.landscape} alt={alt} />
       </figure>

@@ -4,6 +4,7 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 const getHour = require('../helpers/getHour');
 const randomizer = require('../helpers/randomizer');
 const axios = require('axios')
+const { User, Tweet, Image } = require("../models")
 
 // Access your API key as an environment variable (see "Set up your API key" above)
 const genAI = new GoogleGenerativeAI(process.env.GAI);
@@ -80,10 +81,10 @@ module.exports = class ImageController {
           break;
       }
 
-      const page = randomizer(1, 15)
+      const page = randomizer(1, 10)
 
       const response = await axios({ url: `https://api.pexels.com/v1/search?query=${query}&page=${page}&per_page=${50}`, method: "get", headers: { Authorization: pexelsKey } })
-      let { photos } = response.data
+      let { data } = response
       const { username, subscription: subscriber } = req.user
       let outputTokens = 10
       subscriber ? outputTokens = 50 : outputTokens
@@ -93,19 +94,14 @@ module.exports = class ImageController {
         topP: 0.1,
         topK: 16,
       }
-      const prompt = `Greet ${username}, comment about him/her feeling which is ${feeling} and the image generated for him/her that has ${query} tag. Separate each sentence using\n and limit it into 50-75`
+      const prompt = `Greet ${username}, comment about him/her feeling which is ${feeling} and images generated for him/her that has ${query} tag. Separate each sentence using\n so it can be easily converted to html limit it into 50-75 and try not to sound AI-ish`
 
       const { response: result } = await model.generateContent(prompt, config)
 
       const remainingToken = response.headers['x-ratelimit-remaining']
-      photos.remaining = remainingToken
-      console.log(photos.remaining);
-
       const caption = result.text();
-      
-      photos = { ...photos, caption }
-      
-      res.status(200).json(photos)
+
+      res.status(200).json({ ...data, caption, remainingToken })
     } catch (error) {
       next(error)
     }
@@ -117,7 +113,7 @@ module.exports = class ImageController {
       const { page, limit } = req.query
       const randomPage = randomizer(1, 50)
       let outputTokens = 10
-      const prompt = `Greet ${username}, ask him/her about her day and give a word of encouragement. Separate each sentence using\n`
+      const prompt = `Write a message that fulfilled these conditions: asking ${username} about how they're feeling, limit the words to 30-50 and use \n when entering new line, maybe add quotes about feeling like you would to give energy to friend`
 
       subscriber ? outputTokens = 50 : outputTokens
 
@@ -136,8 +132,6 @@ module.exports = class ImageController {
 
       data = { ...data, caption }
 
-      // console.log(caption);
-      console.log(data.caption);
       res.status(200).json(data)
     } catch (error) {
       next(error)
@@ -149,7 +143,6 @@ module.exports = class ImageController {
       const prompt = "Write a caption for an image about nature, snow and rain in a single image"
       let subscriber = false
       let outputTokens = 50
-      // console.log(outputTokens);
 
       const config = {
         maxOutputTokens: outputTokens,
@@ -160,12 +153,70 @@ module.exports = class ImageController {
       const { response } = await model.generateContent(prompt, config)
       const caption = response.text();
 
-      // subscriber = true
       subscriber ? outputTokens = 200 : outputTokens
-      // console.log(outputTokens, "true");
-      // console.log(model.generationConfig);
-      // console.log(caption);
+
       res.status(200).json(caption)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  static async bindImages(req, res, next) {
+    try {
+      const { id, username, subscription } = req.user
+      const { imgUrl, feeling } = req.query
+
+      console.log(req.query)
+      const emoji = feeling
+      const prompt = `Write a caption for ${emoji} in less than 3 sentences separated by \n `
+
+      let subscriber = false
+      let outputTokens = 50
+
+      const config = {
+        maxOutputTokens: outputTokens,
+        temperature: 0.9,
+        topP: 0.1,
+        topK: 16,
+      }
+      const { response } = await model.generateContent(prompt, config)
+      const caption = response.text();
+
+      const prompt2 = `create a title for the image based on ${caption}`
+      const { response: response2 } = await model.generateContent(prompt2, config)
+      const title = response.text();
+
+
+      subscriber ? outputTokens = 200 : outputTokens
+
+      console.log(feeling);
+      const tweet = await Tweet.create({
+        title, emoji, caption, UserId: id
+      })
+
+      const image = await Image.create({
+        TweetId: tweet.id, imgUrl
+      })
+
+      const userImages = await Tweet.findAll({
+        attributes: ["id", "emoji", "title", "caption"],
+        include: [
+          {
+            model: Image,
+            attributes: ["imgUrl"],
+          },
+          {
+            model: User,
+            attributes: ["username", "email", "subscription"],
+          },
+        ],
+        where: {
+          UserId: id,
+        },
+      });
+      
+
+      res.status(200).json(userImages)
     } catch (error) {
       next(error)
     }

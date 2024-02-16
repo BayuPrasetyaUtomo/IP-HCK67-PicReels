@@ -6,7 +6,7 @@ export default function Hero({ props }) {
 
   return (
     <>
-      <div className="hero min-h-[500px] bg-base-200">
+      <div className="sticky hero min-h-[450px] bg-base-200">
         <div className="hero-content text-center">
           <div className="max-w-md">
             <h1 className="text-5xl font-bold">
@@ -15,11 +15,19 @@ export default function Hero({ props }) {
             <p className="py-6 whitespace-pre-line">
               {props && props.captions
                 ? props.captions
-                : "Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem quasi. In deleniti aut repudiandae et a id nisi."}
+                : "These are lists of images generated for you. Some actually picked by you. And I hope you enjoy this experience"}
             </p>
             <div className="flex flex-wrap justify-center gap-6">
               {tags.map((tag, index) => {
-                return <Link key={`${tag}_${index}`} to={`/feelings/?feeling=${tag.toLowerCase()}`} className="btn btn-primary w-32">{tag}</Link>;
+                return (
+                  <Link
+                    key={`${tag}_${index}`}
+                    to={`/feelings/?feeling=${tag.toLowerCase()}`}
+                    className="btn btn-primary w-32"
+                  >
+                    {tag}
+                  </Link>
+                );
               })}
             </div>
           </div>

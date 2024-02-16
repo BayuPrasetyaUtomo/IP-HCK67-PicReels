@@ -2,15 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function PersCards({ photo, queries }) {
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    console.log(Object.keys(photo));
-    if (Object.keys(photo).length !== 0) {
-      setLoading(false);
-    }
-  }, []);
-
   const { id, title, caption, emoji, User, Image } = photo;
 
   return (

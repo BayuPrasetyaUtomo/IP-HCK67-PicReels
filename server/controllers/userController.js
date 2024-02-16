@@ -57,8 +57,9 @@ module.exports = class UserController {
       });
       const { name: username, email } = ticket.getPayload();
 
-      let user = await User.findOne({ where: { email } })
+      const user = await User.findOne({ where: { email } })
 
+      console.log(ticket);
       if (!user) {
         user.create({
           username,
@@ -67,6 +68,7 @@ module.exports = class UserController {
         }, {
           hooks: false
         })
+
         const token = signToken({ id: user.id })
         res.status(200).json({ access_token: `${token}`, user: { username: user.username, subscription: user.subscription } })
       }
@@ -77,23 +79,6 @@ module.exports = class UserController {
       next(error)
     }
   }
-
-
-  // static async leave() {
-  //   try {
-
-  //     const { id, username } = req.user
-
-  //     console.log(id);
-  //     const user = await User.findByPk(id)
-
-  //     user && user.destroy({ where: { id } })
-
-  //     res.status(200).json({ message: `It's unfortunate that you leave, but I hope you the best in your journey ${username}` })
-  //   } catch (error) {
-
-  //   }
-  // }
 
 
 }

@@ -5,6 +5,8 @@ import { randomizer } from "../utils";
 import { LoadingCircle } from "../components";
 import { GoogleLogin } from "@react-oauth/google";
 
+// const base_url = "https://dev.katakatari.site"
+const base_url = "http://localhost:3000"
 export default function LoginPage() {
   const [photo, setPhoto] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -15,7 +17,7 @@ export default function LoginPage() {
     try {
       const { data } = await axios({
         method: "get",
-        url: "http://localhost:3000/surprise",
+        url: base_url + "/surprise",
       });
 
       setPhoto(data);
@@ -35,7 +37,7 @@ export default function LoginPage() {
     try {
       const { data } = await axios({
         method: "post",
-        url: "http://localhost:3000/login",
+        url: base_url + "/login",
         data: input,
       });
       // console.log(data);
@@ -53,7 +55,7 @@ export default function LoginPage() {
     try {
       const { data } = await axios({
         method: "POST",
-        url: "http://localhost:3000/google-login",
+        url: base_url + "/google-login",
         headers: {
           google_token: response.credential,
         },

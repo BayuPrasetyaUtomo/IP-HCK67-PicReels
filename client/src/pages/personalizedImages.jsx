@@ -19,12 +19,14 @@ export default function PersonalizedImage() {
   const { href, pathname } = window.location;
   const queries = href.split(pathname)[1];
 
+  // const base_url = "https://dev.katakatari.site"
+  const base_url = "https://localhost:3000"
   const fetchImage = async () => {
     try {
       const { photos, caption } = (
         await axios({
           method: "get",
-          url: `http://localhost:3000/greet${queries ? queries : ""}`,
+          url: `${base_url}/greet${queries ? queries : ""}`,
           headers: {
             Authorization: `Bearer ${access_token}`,
           },

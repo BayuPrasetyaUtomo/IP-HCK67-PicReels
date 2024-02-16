@@ -72,7 +72,7 @@ export default function LoginPage() {
   function googleSignIn() {
     google.accounts.id.initialize({
       client_id:
-        "757857290112-c6o03pkilg2g1qgblvh8favngit0at8h.apps.googleusercontent.com",
+        import.meta.env.VITE_GCID,
       callback: handleCredentialResponse,
     });
     google.accounts.id.renderButton(

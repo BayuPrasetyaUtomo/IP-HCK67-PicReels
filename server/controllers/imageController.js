@@ -100,7 +100,8 @@ module.exports = class ImageController {
 
       const remainingToken = response.headers['x-ratelimit-remaining']
       const caption = result.text();
-
+      
+      console.log(remainingToken);
       res.status(200).json({ ...data, caption, remainingToken })
     } catch (error) {
       next(error)
@@ -126,6 +127,8 @@ module.exports = class ImageController {
         topK: 16,
       }
 
+      const { totalTokens } = await model.countTokens(prompt);
+      console.log(totalTokens);
       const { response } = await model.generateContent(prompt, config)
 
       const caption = response.text();
@@ -214,7 +217,7 @@ module.exports = class ImageController {
           UserId: id,
         },
       });
-      
+
 
       res.status(200).json(userImages)
     } catch (error) {

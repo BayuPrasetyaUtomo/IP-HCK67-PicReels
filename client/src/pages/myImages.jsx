@@ -40,7 +40,7 @@ export default function MyImages() {
     fetchImage();
   }, [queries]);
 
-  !loading && console.log(photos[0].Image.imgUrl)
+  console.log(photos);
   return (
     <>
       <Hero />
